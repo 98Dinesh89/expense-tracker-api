@@ -1,4 +1,4 @@
-import pool from "../config/db";
+import pool from "../config/db.js"
 
 const COLUMNS = 'id, title, amount, category, expense_date, note, created_at, updated_at';
 
@@ -27,13 +27,12 @@ async function create({ title, amount, category, expense_date, note }) {
 }
 
 async function update(id, { title, amount, category, expense_date, note }) {
-    const [result] = await pool.execute(
+    await pool.execute(
         `UPDATE expenses
      SET title = ?, amount = ?, category = ?, expense_date = ?, note = ?
      WHERE id = ?`,
         [title, amount, category, expense_date, note, id]
     );
-    if (result.affectedRows === 0) return null;
     return findById(id);
 }
 
@@ -42,4 +41,4 @@ async function remove(id) {
     return result.affectedRows > 0;
 }
 
-export { findById, findAll, create, update, remove };
+export default { findById, findAll, create, update, remove };
