@@ -1,4 +1,4 @@
-const AppError = require('../utils/AppError');
+import AppError from "../utils/AppError.js";
 
 const MAX_UNSIGNED_INT = 4294967295;
 

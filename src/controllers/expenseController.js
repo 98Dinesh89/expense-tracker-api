@@ -1,8 +1,5 @@
-import Expense from "../models/expenseModel.js";
-import AppError from "../utils/AppError.js";
-
-const Expense = require('../models/expenseModel');
-const AppError = require('../utils/AppError');
+import * as Expense from '../models/expenseModel.js';
+import AppError from '../utils/AppError.js';
 
 async function createExpense(req, res, next) {
     try {
@@ -15,8 +12,9 @@ async function createExpense(req, res, next) {
 
 async function getExpenses(req, res, next) {
     try {
-        const expenses = await Expense.findAll();
-        res.json({ count: expenses.length, data: expenses });
+        const filters = req.filters || {};
+        const expenses = await Expense.findAll(filters);
+        res.json({ count: expenses.length, filters, data: expenses });
     } catch (err) {
         next(err);
     }
@@ -46,10 +44,10 @@ async function deleteExpense(req, res, next) {
     try {
         const deleted = await Expense.remove(req.params.id);
         if (!deleted) throw new AppError(404, 'Expense not found');
-        res.status(204).send();
+        res.status(200).json({ message: "Expense deleted" });
     } catch (err) {
         next(err);
     }
 }
 
-export default { createExpense, getExpense, getExpenses, updateExpense, deleteExpense };
+export { createExpense, getExpenses, getExpense, updateExpense, deleteExpense };
