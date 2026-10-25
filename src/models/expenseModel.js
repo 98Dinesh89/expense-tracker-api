@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import buildWhere from '../utils/buildWhere.js';
 
 const COLUMNS = 'id, title, amount, category, expense_date, note, created_at, updated_at';
 
@@ -10,24 +11,8 @@ async function findById(id) {
     return rows[0] || null;
 }
 
-async function findAll({ category, from, to } = {}) {
-    const conditions = [];
-    const params = [];
-
-    if (category) {
-        conditions.push('category = ?');
-        params.push(category);
-    }
-    if (from) {
-        conditions.push('expense_date >= ?');
-        params.push(from);
-    }
-    if (to) {
-        conditions.push('expense_date <= ?');
-        params.push(to);
-    }
-
-    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+async function findAll(filters = {}) {
+    const { where, params } = buildWhere(filters);
 
     const [rows] = await pool.execute(
         `SELECT ${COLUMNS} FROM expenses ${where} ORDER BY expense_date DESC, id DESC`,
